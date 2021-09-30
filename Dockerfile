@@ -1,23 +1,20 @@
 # syntax=docker/dockerfile:1
-FROM node:14-buster-slim as BUILD_IMAGE
+FROM node:16 as BUILD_IMAGE
 WORKDIR /app
-ENV NODE_ENV=production
 
-COPY package.json ./
-COPY yarn.lock ./
-COPY .yarnrc.yml ./
-COPY .yarn ./.yarn
+RUN curl -f https://get.pnpm.io/v6.14.js | node - add --global pnpm
 
-RUN yarn --immutable
+COPY package.json pnpm-lock.yaml ./
+
+RUN pnpm i --frozen-lockfile --strict-peer-dependencies
 
 COPY . .
 
-RUN yarn build
+RUN pnpm build
 
-RUN yarn cache clean
-RUN npm prune --production
+RUN pnpm prune --prod
 
-FROM node:14-buster-slim
+FROM node:16-buster-slim
 WORKDIR /app
 ENV NODE_ENV=production
 

@@ -5,8 +5,8 @@
 ## Usage
 
 ```bash
-yarn
-yarn build
+pnpm i
+pnpm build
 node .
 ```
 
